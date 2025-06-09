@@ -73,11 +73,13 @@ document.addEventListener("DOMContentLoaded", function() {
     const userMessageInput = document.getElementById("usermessage");
 
     const customResponses = {
-        "Thank you":"You're very welcome. If you have more questions, please feel free to ask away.",
-        "Thanks":"You're very welcome. If you have more questions, please feel free to ask away.",
-        "Hi":"Hello there! How may I help you?",
-        "Who are you?":"I am an assistant designed to help you navigate through WiFix and what it's about",
-        " ":"Ask any question, I'm here to help",
+        "Thanks":"You're welcome! If you have more questions, ask away!",
+        "Thank you":"Sure! If you have any more questions, please feel free to ask",
+        "Hi":"Hellooo! How may I be of service?",
+        "Hello":"Hi there! How may I help you?",
+        "What is Wifix?":"WiFix is a startup company dedicated to eliminating network disruptions before they occur.",
+        "What products does WiFix offer?":"WiFix has three products: DarkSpot detector, PulseNet tracker and Echolink.",
+        " ":"Kindly ask any questions. I'm here to help!",
         "Who founded WiFix?": "WiFix was founded by Noah Kipkechem, focusing on AI-driven connectivity solutions.",
         "What is WiFix?": "WiFix is an AI startup dedicated to eliminating network disruptions before they occur.",
         "What problems does WiFix solve?": "WiFix helps users avoid WiFi interruptions through predictive analysis and smart network switching.",
@@ -94,37 +96,38 @@ document.addEventListener("DOMContentLoaded", function() {
         let botResponse = document.createElement("div");
         botResponse.className = "bot";
 
-        if (customResponses[userMessage]) {
-            botResponse.textContent = customResponses[userMessage];
-        } else {
-            botResponse.textContent = "Hmm, that is beyond my scope! Ask me about WiFix, our services, or network optimization.";
-        }
+        let lowerCaseMessage = userMessage.toLowerCase().trim();
+
+        let matchedResponse = Object.keys(customResponses).find(key => 
+            lowerCaseMessage.includes(key.toLowerCase())
+        );
+
+        botResponse.textContent = matchedResponse ? customResponses[matchedResponse] : 
+            "Kindly ask me anything about WiFix. I'll be sure to help!";
 
         chatBox.appendChild(botResponse);
     }
 
-    if (sendBtn && chatBox) {
-        sendBtn.addEventListener("click", function() {
-            let userMessage = userMessageInput.value.trim();
+    sendBtn.addEventListener("click", function() {
+        let userMessage = userMessageInput.value.trim();
 
-            if (!userMessage) return;
+        if (!userMessage) return;
 
-            let newMessage = document.createElement("div");
-            newMessage.className = "usermessage";
-            newMessage.textContent = userMessage;
-            chatBox.appendChild(newMessage);
+        let newMessage = document.createElement("div");
+        newMessage.className = "usermessage";
+        newMessage.textContent = userMessage;
+        chatBox.appendChild(newMessage);
 
-            handleChatResponse(userMessage);
+        handleChatResponse(userMessage);
 
-            userMessageInput.value = "";
+        userMessageInput.value = "";
+    });
+
+    document.querySelectorAll(".preset").forEach((button) => {
+        button.addEventListener("click", function() {
+            let question = button.textContent;
+            userMessageInput.value = question;
+            sendBtn.click();
         });
-
-        document.querySelectorAll(".preset").forEach((button) => {
-            button.addEventListener("click", function() {
-                let question = button.textContent;
-                userMessageInput.value = question;
-                sendBtn.click();
-            });
-        });
-    }
+    });
 });

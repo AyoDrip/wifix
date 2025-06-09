@@ -24,7 +24,7 @@
                 <ul>
                     <li><a href="#about-us">About Us</a></li>
                     <li><a href="#our-products">Our Products</a></li>
-                    <li><a href="#testimonials">Testimonials</a></li>
+                    <li><a href="#faqs">Frequently Asked Questions</a></li>
                     <li><a href="#meet-the-team">Meet The Team</a></li>
                     <li><a href="#assistant">Assistant</a></li>
                     <li><a href="#contact">Contact</a></li>
@@ -42,7 +42,7 @@
             <button class="getstarted">Get Started</button>
             </div>
         </section>
-        <section class="aboutus">
+        <section id="about-us" class="aboutus">
             <h4>About Us</h4>
             <img src="images/aboutus.jpg" alt="about" class="aboutimg">
             <img src="images/newlogo.png" alt="logo" class="logoimg">
@@ -53,7 +53,7 @@
                 <p class="abt"><strong class="community">Community Impact</strong>Our technology enhances remote learning, smart workspaces and everyday connectivity, ensuring stable access where it's needed most.</p>
             </div>    
         </section>
-        <section class="products">
+        <section id="our-products" class="products">
             <h4>Our Products</h4>
             <div class="productcarousel">
                 <button id="prevBtn">◀</button>
@@ -107,7 +107,7 @@
             <div class="personal"></div>
             <div class="business"></div>
         </section>
-        <section class="FAQ">
+        <section id="faqs" class="FAQ">
             <h4>Frequently Asked Questions</h4>
             <div class="faq">
                 <button class="q">Does EchoLink switch networks instantly?</button>
@@ -122,7 +122,7 @@
                 <p class="a">Yes! Our tools ensure stable WiFi for smooth gameplay and faster downloads as well as uninterrupted video calls.</p>
             </div>
         </section>
-        <section class="teamsec">
+        <section  id="meet-the-team" class="teamsec">
             <h4>Meet the Team</h4>
             <div class="meettheteam">
                 <div class="team">
@@ -151,14 +151,7 @@
                 </div>
             </div>
         </section>
-        <section class="brandbar">
-            <div class="values">
-                <span>Your Wifi</span>
-                <span>Your Rules</span>
-                <span>No Interruptions</span>
-            </div>
-        </section>
-        <section class="assistant">
+        <section  id="assistant" class="assistant">
             <h4>Assistant</h4>
             <div class="chatbox">
                 <div class="chat">
@@ -166,9 +159,14 @@
                 </div>
                 <input type="text" placeholder="Message me..." id="usermessage">
                 <img src="images/send.png" alt="sendimg" id="sendbutton">
+            </div class="brandbar">
+            <div class="values">
+                <div class="value one"><span>Your Wifi</span></div>
+                <div class="value two"><span>Your Rules</span></div>
+                <div class="value three"><span>No Interruptions</span></div>
             </div>
         </section>
-        <section class="contact">
+        <section  id="contact" class="contact">
             <h4>Contact Us</h4>
             <form id="contactForm">
                 <label>Name: <input type="text" id="name" required></label>

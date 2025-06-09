@@ -481,6 +481,50 @@ h6 {
     text-align: left;
 }
 
+.brandbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.values {
+    display: flex;
+    align-items: center;
+}
+
+.value {
+    background-color: #1E9399;
+    color: white;
+    padding: 20px 40px;
+    font-size: 20px;
+    font-family: 'Jaro', sans-serif;
+    text-align: center;
+    width: 470px;
+    height: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.two {
+    border-radius: 0;
+    background-color: #8a7a7a;
+}
+
+.one {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    background-color:#176b6e;
+}
+
+.three {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background-color: rgb(145, 29, 29);
+}
+
+
 .assistant {
     position: relative;
     top: 1950px;
@@ -546,7 +590,7 @@ input[type="text"] {
 .usermessage {
     width: 97%;
     background: #1E9399;
-    color: white;
+    color: #000000;
     padding: 10px;
     border-radius: 10px;
     font-size: 18px;
@@ -689,3 +733,221 @@ button:hover {
     top: 3000px;
 }
 
+@media only screen and (max-width: 768px) {
+    body {
+        overflow-x: hidden;
+    }
+    
+    .navigation {
+        top: 10px;
+        flex-direction: column;
+        text-align: right;
+        align-items: flex-end;
+    }
+    
+    .wifix {
+        margin-left: 20px;
+        font-size: 24px;
+    }
+    
+    ul {
+        position: static;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+        margin-left: 20px;
+    }
+    
+    .login {
+        float: right;
+        right: 18px;
+        width: 120px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    .heroimg {
+        width: 100%;
+        height: auto;
+        left: 0;
+        border-radius: 30px;
+    }
+    
+    .headline {
+        font-size: 36px;
+        top: 100px;
+        left: 20px;
+    }
+    
+    .tagline {
+        font-size: 15px;
+        top: 250px;
+        left: 20px;
+    }
+    
+    .getstarted {
+        width: 200px;
+        height: 50px;
+        font-size: 20px;
+        left: 20px;
+        top: 350px;
+    }
+    
+    .aboutus {
+        flex-direction: column;
+    }
+    
+    .aboutimg, .logoimg {
+        display: none;
+    }
+    
+    .abtuspar {
+        flex-direction: column;
+        gap: 20px;
+        top: 50px;
+        position: relative;
+    }
+    
+    .abt {
+        min-width: 80%;
+        margin: 0 auto 20px;
+    }
+    
+    .products {
+        top: 1100px;
+        height: auto;
+        padding-bottom: 50px;
+    }
+    
+    .productcarousel {
+        width: 100%;
+    }
+    
+    .productslide {
+        width: 90%;
+        height: auto;
+        padding-bottom: 300px;
+    }
+    
+    .trackerimg, .echolinkimg, .detectorimg {
+        width: 250px;
+        height: 250px;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 250px;
+    }
+    
+    .productslide h5 {
+        position: static;
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    .productslide p {
+        position: static;
+        text-align: center;
+        margin-top: 270px;
+        padding: 10px;
+    }
+    
+    .tools {
+        top: 200px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .FAQ {
+        top: 1300px;
+        height: auto;
+        padding-bottom: 30px;
+    }
+    
+    .teamsec {
+        top: 1500px;
+        height: auto;
+    }
+    
+    .meettheteam {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .team {
+        width: 80%;
+        height: auto;
+        margin-top: 30px;
+    }
+    
+    .assistant {
+        top: 1700px;
+    }
+    
+    .chatbox {
+        width: 90%;
+    }
+    
+    #sendbutton {
+        right: 40px;
+        top: 300px;
+    }
+    
+    .contact {
+        top: 1900px;
+    }
+    
+    form {
+        width: 90%;
+    }
+    
+    .foot {
+        top: 2000px;
+    }
+    
+    .userpopup {
+        width: 80%;
+        padding: 15px;
+    }
+    
+    .userpopup h4 {
+        font-size: 20px;
+    }
+    
+    .userpopup button {
+        font-size: 16px;
+        padding: 8px 15px;
+    }
+}
+
+@media only screen and (max-width: 320px) {
+    .headline {
+        font-size: 28px;
+    }
+    
+    .tagline {
+        font-size: 16px;
+    }
+    
+    .getstarted {
+        width: 150px;
+        height: 40px;
+        font-size: 16px;
+    }
+    
+    .abt {
+        min-width: 90%;
+    }
+    
+    .productslide {
+        padding-bottom: 350px;
+    }
+    
+    .trackerimg, .echolinkimg, .detectorimg {
+        width: 200px;
+        height: 200px;
+        top: 300px;
+    }
+    
+    .productslide p {
+        margin-top: 320px;
+    }
+}
