@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", async function() {
     const popup = document.getElementById("modePopup");
     const businessBtn = document.getElementById("businessMode");
     const personalBtn = document.getElementById("personalMode");
@@ -72,61 +72,55 @@ document.addEventListener("DOMContentLoaded", function() {
     const sendBtn = document.getElementById("sendbutton");
     const userMessageInput = document.getElementById("usermessage");
 
-    const customResponses = {
-        "Thanks":"You're welcome! If you have more questions, ask away!",
-        "Thank you":"Sure! If you have any more questions, please feel free to ask",
-        "Hi":"Hellooo! How may I be of service?",
-        "Hello":"Hi there! How may I help you?",
-        "What is Wifix?":"WiFix is a startup company dedicated to eliminating network disruptions before they occur.",
-        "What products does WiFix offer?":"WiFix has three products: DarkSpot detector, PulseNet tracker and Echolink.",
-        " ":"Kindly ask any questions. I'm here to help!",
-        "Who founded WiFix?": "WiFix was founded by Noah Kipkechem, focusing on AI-driven connectivity solutions.",
-        "What is WiFix?": "WiFix is an AI startup dedicated to eliminating network disruptions before they occur.",
-        "What problems does WiFix solve?": "WiFix helps users avoid WiFi interruptions through predictive analysis and smart network switching.",
-        "What are WiFix’s products?": "WiFix offers PulseNet Tracker (predictive mapping), EchoLink (automatic network switching), and DarkSpot Detector (dead zone analysis).",
-        "How does PulseNet Tracker work?": "PulseNet Tracker uses AI to analyze WiFi signal patterns and predict connection drops in advance.",
-        "How does EchoLink work?": "EchoLink seamlessly switches between networks, ensuring zero downtime for users.",
-        "What does DarkSpot Detector do?": "DarkSpot Detector scans weak signal areas and suggests optimizations for better connectivity.",
-        "How can I contact WiFix?": "You can email us at nckechem@gmail.com or visit our GitHub at github.com/AyoDrip.",
-        "How can I support WiFix?": "Support us by spreading the word, using our services, and sharing feedback.",
-        "What’s WiFix’s long-term vision?": "WiFix aims to revolutionize network stability, making connectivity effortless and disruption-free."
-    };
+    async function loadContext() {
+        try {
+            const response = await fetch("context.txt");
+            const contextText = await response.text();
+            return contextText;
+        } catch (error) {
+            console.error("Error loading context file:", error);
+            return "";
+        }
+    }
 
-    function handleChatResponse(userMessage) {
-        let botResponse = document.createElement("div");
-        botResponse.className = "bot";
+    async function handleChatResponse(userMessage) {
+        const context = await loadContext();
+        puter.ai.chat({ prompt: `${context}\nUser: ${userMessage}` })
+            .then(response => {
+                addMessage(response.message, false);
+            })
+            .catch(error => {
+                console.error("AI response error:", error);
+            });
+    }
 
-        let lowerCaseMessage = userMessage.toLowerCase().trim();
-
-        let matchedResponse = Object.keys(customResponses).find(key => 
-            lowerCaseMessage.includes(key.toLowerCase())
-        );
-
-        botResponse.textContent = matchedResponse ? customResponses[matchedResponse] : 
-            "Kindly ask me anything about WiFix. I'll be sure to help!";
-
-        chatBox.appendChild(botResponse);
+    function addMessage(input, isUser) {
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add(isUser ? "usermessage" : "bot");
+        messageDiv.textContent = input;
+        chatBox.appendChild(messageDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
 
     sendBtn.addEventListener("click", function() {
-        let userMessage = userMessageInput.value.trim();
-
+        const userMessage = userMessageInput.value.trim();
         if (!userMessage) return;
 
-        let newMessage = document.createElement("div");
-        newMessage.className = "usermessage";
-        newMessage.textContent = userMessage;
-        chatBox.appendChild(newMessage);
+        addMessage(userMessage, true);
+        userMessageInput.value = "";
 
         handleChatResponse(userMessage);
-
-        userMessageInput.value = "";
     });
 
-    document.querySelectorAll(".preset").forEach((button) => {
+    userMessageInput.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            sendBtn.click();
+        }
+    });
+
+    document.querySelectorAll(".preset").forEach(button => {
         button.addEventListener("click", function() {
-            let question = button.textContent;
-            userMessageInput.value = question;
+            userMessageInput.value = button.textContent;
             sendBtn.click();
         });
     });
