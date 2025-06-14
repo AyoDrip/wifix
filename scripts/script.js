@@ -4,13 +4,11 @@ document.addEventListener("DOMContentLoaded", async function() {
     const personalBtn = document.getElementById("personalMode");
 
     if (popup) {
-        popup.classList.add("show");
-
+        setTimeout(() => popup.classList.add("show"), 100);
         businessBtn.addEventListener("click", function() {
             alert("Business Mode selected!");
             popup.classList.remove("show");
         });
-
         personalBtn.addEventListener("click", function() {
             alert("Personal Mode selected!");
             popup.classList.remove("show");
@@ -18,33 +16,43 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
 
     const carousel = document.querySelector(".actualcarousel");
+    const slides = document.querySelectorAll(".productslide");
     const prevBtn = document.getElementById("prevBtn");
     const nextBtn = document.getElementById("nextBtn");
 
-    if (carousel && nextBtn && prevBtn) {
-        let index = 0;
-        const totalItems = document.querySelectorAll(".productslide").length;
+    if (carousel && prevBtn && nextBtn && slides.length > 0) {
+        let currentIndex = 0;
+        const totalSlides = slides.length;
+        carousel.style.overflow = 'visible';
+
+        function updateCarousel() {
+            const slideWidth = slides[0].offsetWidth;
+            const carouselStyle = window.getComputedStyle(carousel);
+            const gap = parseInt(carouselStyle.gap) || 20;
+            const step = slideWidth + gap;
+            carousel.style.transform = `translateX(-${currentIndex * step}px)`;
+            carousel.style.transition = 'transform 0.5s ease-in-out';
+        }
 
         nextBtn.addEventListener("click", () => {
-            index = (index + 1) % totalItems;
+            currentIndex = (currentIndex + 1) % totalSlides;
             updateCarousel();
         });
 
         prevBtn.addEventListener("click", () => {
-            index = (index - 1 + totalItems) % totalItems;
+            currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
             updateCarousel();
         });
 
-        function updateCarousel() {
-            carousel.style.transform = `translateX(-${index * 100}%)`;
-        }
+        window.addEventListener('resize', updateCarousel);
     }
 
     document.querySelectorAll(".q").forEach((button) => {
         button.addEventListener("click", () => {
             let answer = button.nextElementSibling;
             if (answer) {
-                answer.style.display = answer.style.display === "block" ? "none" : "block";
+                const isVisible = answer.style.display === "block";
+                answer.style.display = isVisible ? "none" : "block";
             }
         });
     });
@@ -53,16 +61,13 @@ document.addEventListener("DOMContentLoaded", async function() {
     if (form) {
         form.addEventListener("submit", function(event) {
             event.preventDefault();
-
             let name = document.getElementById("name").value.trim();
             let email = document.getElementById("email").value.trim();
             let message = document.getElementById("message").value.trim();
-
             if (!name || !email || !message) {
                 alert("Please fill out all fields.");
                 return;
             }
-
             alert("Message sent successfully!");
             this.reset();
         });
@@ -72,56 +77,64 @@ document.addEventListener("DOMContentLoaded", async function() {
     const sendBtn = document.getElementById("sendbutton");
     const userMessageInput = document.getElementById("usermessage");
 
-    async function loadContext() {
+    async function fetchAppContext() {
         try {
-            const response = await fetch("context.txt");
-            const contextText = await response.text();
-            return contextText;
+            const response = await fetch('context.txt');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return await response.text();
         } catch (error) {
-            console.error("Error loading context file:", error);
-            return "";
+            console.error("Could not fetch context.txt:", error);
+            return "You are a helpful assistant for a company named WiFix.";
         }
     }
 
-    async function handleChatResponse(userMessage) {
-        const context = await loadContext();
-        puter.ai.chat({ prompt: `${context}\nUser: ${userMessage}` })
-            .then(response => {
-                addMessage(response.message, false);
-            })
-            .catch(error => {
-                console.error("AI response error:", error);
-            });
-    }
-
-    function addMessage(input, isUser) {
+    function addMessage(text, isUser) {
         const messageDiv = document.createElement("div");
         messageDiv.classList.add(isUser ? "usermessage" : "bot");
-        messageDiv.textContent = input;
+        messageDiv.textContent = text;
         chatBox.appendChild(messageDiv);
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    sendBtn.addEventListener("click", function() {
-        const userMessage = userMessageInput.value.trim();
-        if (!userMessage) return;
+    async function handleChatResponse(userMessage) {
+        const typingIndicator = document.createElement("div");
+        typingIndicator.classList.add("bot");
+        typingIndicator.textContent = "WiFix is thinking...";
+        chatBox.appendChild(typingIndicator);
+        chatBox.scrollTop = chatBox.scrollHeight;
 
-        addMessage(userMessage, true);
-        userMessageInput.value = "";
+        const context = await fetchAppContext();
+        const prompt = `${context}\n\nUser: ${userMessage}\nAssistant:`;
 
-        handleChatResponse(userMessage);
-    });
-
-    userMessageInput.addEventListener("keypress", function(event) {
-        if (event.key === "Enter") {
-            sendBtn.click();
+        try {
+            if (typeof puter === 'undefined' || !puter.ai || !puter.ai.chat) {
+                throw new Error("Puter.js library is not available.");
+            }
+            const response = await puter.ai.chat({ prompt: prompt });
+            chatBox.removeChild(typingIndicator);
+            addMessage(response.message, false);
+        } catch (error) {
+            console.error("AI response error:", error);
+            chatBox.removeChild(typingIndicator);
+            addMessage("I'm sorry, I seem to be having trouble connecting. Please try again in a moment.", false);
         }
-    });
+    }
 
-    document.querySelectorAll(".preset").forEach(button => {
-        button.addEventListener("click", function() {
-            userMessageInput.value = button.textContent;
-            sendBtn.click();
+    if (sendBtn && userMessageInput && chatBox) {
+        sendBtn.addEventListener("click", function() {
+            const userMessage = userMessageInput.value.trim();
+            if (!userMessage) return;
+            addMessage(userMessage, true);
+            userMessageInput.value = "";
+            handleChatResponse(userMessage);
         });
-    });
+
+        userMessageInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                sendBtn.click();
+            }
+        });
+    }
 });
