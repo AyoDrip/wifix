@@ -43,8 +43,6 @@ document.addEventListener("DOMContentLoaded", async function() {
             currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
             updateCarousel();
         });
-
-        window.addEventListener('resize', updateCarousel);
     }
 
     document.querySelectorAll(".q").forEach((button) => {
@@ -86,7 +84,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             return await response.text();
         } catch (error) {
             console.error("Could not fetch context.txt:", error);
-            return "You are a helpful assistant for a company named WiFix.";
+            return "You are a helpful assistant for a company named WiFix. Answer questions ONLY about WiFix and its products based on information provided in the system message. If you don't know, state that you don't have that information.";
         }
     }
 
@@ -101,23 +99,41 @@ document.addEventListener("DOMContentLoaded", async function() {
     async function handleChatResponse(userMessage) {
         const typingIndicator = document.createElement("div");
         typingIndicator.classList.add("bot");
-        typingIndicator.textContent = "WiFix is thinking...";
+        typingIndicator.textContent = "Hmmm...";
         chatBox.appendChild(typingIndicator);
         chatBox.scrollTop = chatBox.scrollHeight;
 
-        const context = await fetchAppContext();
-        const prompt = `${context}\n\nUser: ${userMessage}\nAssistant:`;
-
         try {
             if (typeof puter === 'undefined' || !puter.ai || !puter.ai.chat) {
-                throw new Error("Puter.js library is not available.");
+                throw new Error("Puter.js library or puter.ai.chat function is not available. Ensure puter.js is loaded and running in a compatible environment (e.g., deployed on Puter.com).");
             }
-            const response = await puter.ai.chat({ prompt: prompt });
+
+            const contextContent = await fetchAppContext();
+
+            const messages = [
+                { role: 'system', content: contextContent },
+                { role: 'user', content: userMessage }
+            ];
+
+            console.log("Sending to Puter AI:", messages);
+
+            const response = await puter.ai.chat(messages);
+
+            console.log("Received from Puter AI:", response);
+
             chatBox.removeChild(typingIndicator);
-            addMessage(response.message, false);
+
+            if (response && response.message && response.message.content && response.finish_reason === 'stop') {
+                addMessage(response.message.content, false);
+            } else {
+                console.error("AI returned an invalid or empty response structure:", response);
+                addMessage("I'm sorry. Perhaps you may ask your question again please?", false);
+            }
         } catch (error) {
-            console.error("AI response error:", error);
-            chatBox.removeChild(typingIndicator);
+            console.error("Error communicating with Puter AI:", error);
+            if (chatBox.contains(typingIndicator)) {
+                chatBox.removeChild(typingIndicator);
+            }
             addMessage("I'm sorry, I seem to be having trouble connecting. Please try again in a moment.", false);
         }
     }
@@ -132,9 +148,19 @@ document.addEventListener("DOMContentLoaded", async function() {
         });
 
         userMessageInput.addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
+            if (event.key === "Enter") { event.preventDefault();
                 sendBtn.click();
             }
         });
     }
+
+    let visitorCount = localStorage.getItem('wifix_visitor_count');
+    if (visitorCount === null) {
+        visitorCount = 0;
+    } else {
+        visitorCount = parseInt(visitorCount);
+    }
+    visitorCount++;
+    localStorage.setItem('wifix_visitor_count', visitorCount);
+    document.getElementById('visitorcount').textContent = `Visitors: ${visitorCount}`;
 });
